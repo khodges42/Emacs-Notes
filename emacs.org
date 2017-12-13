@@ -70,7 +70,11 @@ and view it in emacs to see some of the useful features.
 Create ~/.emacs/init.el
 
 *** My opinionated emacs file additions
+
+
 ```
+
+
 ;; Melpa is the defacto package repo for Emacs. 
 ;;
 (require 'package) 
@@ -152,4 +156,7 @@ Create ~/.emacs/init.el
 (fset 'split4
    [?\C-x ?2 ?\C-x ?3 S-down ?\C-x ?3])
 (global-set-key (kbd "M-4") 'split4)
+
 ```
+
+
