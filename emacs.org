@@ -1,0 +1,153 @@
+* Keybindings & Commands
+
+** Basic Keys
+Emacs guides usually write the Control as C, and Meta (Alt or Escape) as M. Here are a few useful keys to get you started.
+
+- Save: C-x C-s (Hold control and hit X and then S)
+- Open: C-x C-f
+- Copy: M-w (Hold Esc or Alt and hit W)
+- Cut: C-w 
+- Paste (yank): C-y
+- Undo: C-x H
+- Select All: C-x h (Hold control and hit X, then let go of control and hit h)
+
+
+
+** Buffers and Mini Buffers
+Your editable area is called a window. The thing you’re editing in that window is called a buffer. The frame is your whole emacs “box”. You can have multiple windows inside of a frame.
+
+- Move Buffer: C-x B 
+- Split Window Horizontal: C-x 2
+- Split Window Vertical: C-x 3
+- Close All Windows Except Current: C-x 1
+
+The Minibuffer is your command area. You can execute emacs functions inside of here. 
+
+- Minibuffer: M-x
+
+
+** Navigation
+
+- Go To Line: M-g M-g (Hold meta and hit G twice)
+- Interactive Search: C-s
+- End/Beginning of Buffer: M-> or M-<
+- Find Lines: M-x occur RET (Alt+X, type occur, hit return. This is typical emacs notation)
+
+
+** Useful M-x commands
+- Terminal: M-x term RET
+- Revert buffer (reload): M-x revert-buffer RET
+- Eval Buffer (Run the LISP code, useful for emacs file): M-x eval-buffer RET
+
+** Org Mode
+Org Mode is very useful for taking notes, todo lists, calendars and a ton of other things. I use it for my
+personal notes as well as todo lists. Save a file as .org to open org mode. This file is in .org, feel free to save it
+and view it in emacs to see some of the useful features.
+
+
+* Customization / Extension
+
+** Packages
+- Load Theme: M-x load-theme RET (You can then hit tab to view installed themes.)
+- List and install packages: M-x list-packages RET
+
+*** Recommended Packages
+- Winner-mode: Allows you to jump around windows with just shift+arrow keys.
+- ido-mode: Better tab completion and file listing for file open or buffer changing. This is already installed default with Emacs, but you need to enable it in the emacs file.
+- Nyan-mode: Necessary feature of emacs, install immediately.
+- Better Defaults: A handy package enabling a lot of the things we go over in this guide. I recommend not installing it and doing the customization yourself at first to learn what everything is.
+- Neotree: Tree file listing (like you would find in an IDE.)
+- Random-splash-image: So you can have catgirls on your startup screen.
+- Python-mode: Mode for python files
+- Tramp: Remote file editing
+- Magit: git addon
+- Hippie-Expand: Contextual autocomplete.
+
+
+** Editing your emacs file
+
+*** File Creation
+Create ~/.emacs/init.el
+
+*** My opinionated emacs file additions
+;; Melpa is the defacto package repo for Emacs. 
+;;
+(require 'package) 
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (url (concat (if no-ssl "http" "https") "://melpa.org/packages/")))
+  (add-to-list 'package-archives (cons "melpa" url) t))
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+(package-initialize)
+
+
+;;;; Emacs the way stallman wanted it (removes menu bar, toolbar, scrollbar)
+;;
+  (menu-bar-mode -1)
+  (when (fboundp 'tool-bar-mode)
+    (tool-bar-mode -1))
+  (when (fboundp 'scroll-bar-mode)
+    (scroll-bar-mode -1))
+  (when (fboundp 'horizontal-scroll-bar-mode)
+(horizontal-scroll-bar-mode -1))
+
+
+;;;; Global Linum Mode (numbers all lines. You can turn off by M-x Linum-mode)
+;;
+(global-linum-mode 1)
+
+
+;;;; Python Mode
+;;
+(defvar pyPackages
+  '(better-defaults
+   elpy))
+
+
+;;;; Cool hacker transparency
+;;
+(set-frame-parameter (selected-frame) 'alpha '(94 . 83))
+(add-to-list 'default-frame-alist '(alpha . (94 . 83)))
+
+
+;;;; trees
+;;
+(require 'neotree)
+(global-set-key [C-tab] 'neotree-toggle)
+
+
+;;;; ido mode
+;;
+(ido-mode 1)
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+
+
+;;;; Themes. You can replace the 'rebecca with any theme you have installed.
+;;
+(add-hook 'emacs-startup-hook
+	  (lambda()
+	    (load-theme 'rebecca)
+	    ))
+
+
+;;;; Winner Mode
+;;
+(when (fboundp 'winner-mode)
+  (winner-mode 1))
+
+
+;;;; Hippie Expand
+;;
+ (global-set-key (kbd "M-/") 'hippie-expand)
+
+
+;;;;;; Macros
+;;
+;;
+;;;; Split 4 automatically splits into 4 windows.
+(fset 'split4
+   [?\C-x ?2 ?\C-x ?3 S-down ?\C-x ?3])
+(global-set-key (kbd "M-4") 'split4)
